@@ -4,6 +4,7 @@ import json
 from kaggle.api.kaggle_api_extended import KaggleApi
 import zipfile
 import shutil
+import time
 
 def download_dataset(dataset, path):
     # Aseguramos que la ruta exista
@@ -67,6 +68,7 @@ def create_kaggle_file(username, key) -> None:
     print(f'Creado el archivo de credenciales de Kaggle en {FILE_PATH}')
 
 if __name__ == '__main__':
+    start_time = time.time()
     
     # Cargamos las variables de entorno
     load_dotenv()
@@ -90,6 +92,10 @@ if __name__ == '__main__':
     download_dataset(DATASET_DETECTION, DATASET_DETECTION_PATH)
     download_dataset(DATASET_CLASSIFICATION, DATASET_CLASSIFICATION_PATH)
     download_dataset(DATASET_SEGMENTATION, DATASET_SEGMENTATION_PATH)
+    
+    end_time = time.time() - start_time
+    
+    print(f'Todos los datasets se han descargado, tiempo total {end_time} segundos')
     
     
 
