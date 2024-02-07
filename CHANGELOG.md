@@ -12,3 +12,4 @@
 - install.py
 - download_datasets.py
 - env.example
+- convert_notebooks.py

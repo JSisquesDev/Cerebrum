@@ -1,2 +1,8 @@
 python-dotenv
 kaggle
+tensorflow
+matplotlib
+numpy
+ipython
+nbconvert
+jupyter
