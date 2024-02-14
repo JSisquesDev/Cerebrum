@@ -96,42 +96,37 @@ if __name__ == '__main__':
     print(f"Dispositivo de entrenamiento: {tf.config.list_physical_devices('GPU')}")
     
     # Establecemos el tamaño de las imágenes
-    IMG_WIDTH = int(os.getenv("IMG_WIDTH"))
-    IMG_HEIGHT = int(os.getenv("IMG_HEIGHT"))
-    IMG_DEEP = int(os.getenv("IMG_DEEP"))
-    BATCH_SIZE = int(os.getenv("BATCH_SIZE"))
+    IMG_WIDTH = int(os.getenv("CLASSIFICATION_IMG_WIDTH"))
+    IMG_HEIGHT = int(os.getenv("CLASSIFICATION_IMG_HEIGHT"))
+    IMG_DEEP = int(os.getenv("CLASSIFICATION_IMG_DEEP"))
+    BATCH_SIZE = int(os.getenv("CLASSIFICATION_BATCH_SIZE"))
     
     # Establecemos las constantes de las rutas
     PROJECT_PATH = os.getenv("PROJECT_PATH")
-    DATASET_PATH = os.path.join(PROJECT_PATH, os.getenv("DATASET_PATH"))
-    DATASET_TRAIN_PATH = format_path(os.path.join(DATASET_PATH, os.getenv("DATASET_TRAIN_PATH")))
-    DATASET_TEST_PATH = format_path(os.path.join(DATASET_PATH, os.getenv("DATASET_TEST_PATH")))
-    DATASET_VALIDATION_PATH = format_path(os.path.join(DATASET_PATH, os.getenv("DATASET_VALIDATION_PATH")))
+    DATASET_PATH = os.path.join(PROJECT_PATH, os.getenv("DATASET_CLASSIFICATION_PATH"))
     
-    print(f"Ruta de entreno: {DATASET_TRAIN_PATH}")
-    print(f"Ruta de test: {DATASET_TEST_PATH}")
-    print(f"Ruta de validación: {DATASET_VALIDATION_PATH}")
+    print(f"Ruta de entreno: {DATASET_PATH}")
     
     # Creamos el generador de datos
     data_generator = set_image_data_generator()
     
     # Creamos el dataset de entrenamiento
     train_data = data_generator.flow_from_directory(
-        DATASET_TRAIN_PATH,
+        DATASET_PATH,
         target_size = (IMG_HEIGHT, IMG_WIDTH),
         batch_size = BATCH_SIZE,
-        color_mode = "rgb",
+        color_mode = "grayscale",
         shuffle = True,
         class_mode = 'categorical',
-        subset = 'training'
+        subset = 'training',
     )
     
     # Creamos el dataset de validación
     validation_data = data_generator.flow_from_directory(
-        DATASET_VALIDATION_PATH,
+        DATASET_PATH,
         target_size = (IMG_HEIGHT, IMG_WIDTH),
         batch_size = BATCH_SIZE,
-        color_mode = "rgb",
+        color_mode = "grayscale",
         shuffle = False,
         class_mode = 'categorical',
         subset = 'validation'
@@ -147,13 +142,12 @@ if __name__ == '__main__':
     model = create_model(IMG_HEIGHT, IMG_WIDTH, IMG_DEEP, NUM_CATEGORIES)
 
     # Establecemos los epcohs y el patient
-    EPOCHS = int(os.getenv("EPOCHS"))
-    PATIENT = int(os.getenv("PATIENT"))
+    EPOCHS = int(os.getenv("CLASSIFICATION_EPOCHS"))
+    PATIENT = int(os.getenv("CLASSIFICATION_PATIENT"))
     
     # Creamos las constantes para guardar el modelo
-    MODEL_PATH = os.path.join(PROJECT_PATH, os.getenv("MODEL_PATH"))
-    MODEL_NAME = os.path.join(MODEL_PATH, os.getenv("MODEL_NAME"))
-    TMP_PATH = os.path.join(PROJECT_PATH, os.getenv("PATIENT"))
+    MODEL_PATH = os.path.join(PROJECT_PATH, os.getenv("CLASSIFICATION_MODEL_PATH"))
+    MODEL_NAME = os.path.join(MODEL_PATH, os.getenv("CLASSIFICATION_MODEL_NAME"))
     
     # Establecemos los checkpoints
     early_stopping = EarlyStopping(monitor='val_loss', patience=PATIENT, restore_best_weights=True)

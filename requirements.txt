@@ -1,9 +1,11 @@
 python-dotenv
 kaggle
-tensorflow
 matplotlib
 numpy
 ipython
 nbconvert
 jupyter
 path
+scipy
+tensorflow-directml-plugin
+h5py
