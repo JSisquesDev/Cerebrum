@@ -22,6 +22,7 @@ import matplotlib.image as mpimg
 import numpy as np
 import tensorflow.keras as kr
 import random
+import ntpath
 
 from dotenv import load_dotenv
 from tensorflow.keras.utils import load_img, img_to_array
@@ -31,7 +32,7 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.models import load_model
 
 
-# In[36]:
+# In[44]:
 
 
 load_dotenv()
@@ -151,7 +152,14 @@ def show_loss(result):
 # 
 # 
 
-# In[39]:
+# In[51]:
+
+
+def format_path(path) -> str:
+    return path.replace("/", os.sep).replace("\\", os.sep)
+
+
+# In[57]:
 
 
 IN_PATH = "./data/"
@@ -159,16 +167,14 @@ IN_RAW_PATH = IN_PATH + "raw/"
 TRAIN_IN_PATH = IN_PATH + "train/"
 TEST_IN_PATH = IN_PATH + "test/"
 
-from path import path
-
-BRAIN_TUMOR_PATH = path(os.getenv("BRAIN_TUMOR_PATH")).abspath()
+BRAIN_TUMOR_PATH = format_path(os.path.join(os.getenv('PROJECT_PATH'), os.getenv("BRAIN_TUMOR_PATH"))) + os.sep
+BRAIN_HEALTH_PATH = format_path(os.path.join(os.getenv('PROJECT_PATH'), os.getenv("BRAIN_HEALTH_PATH"))) + os.sep
 print(BRAIN_TUMOR_PATH)
-BRAIN_HEALTH_PATH = os.getenv("BRAIN_HEALTH_PATH")
 
 
 # Visualizamos algunas de las imágenes de ejemplo para entender las difenrencias entre un cerebro sano y uno enfermo. Para ello crearemos una función que se encargará de mostrar n imagenes que le indiquemos en forma de celdas.
 
-# In[34]:
+# In[54]:
 
 
 def showImages(path, rows, columns):
@@ -190,7 +196,7 @@ def showImages(path, rows, columns):
 
 # Mostramos unos cuantos cerebros sanos para entender cuando el órgano no contiene un tumor.
 
-# In[35]:
+# In[58]:
 
 
 #IN_HEALTHY_PATH = IN_RAW_PATH + "healthy/"
