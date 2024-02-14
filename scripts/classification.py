@@ -7,13 +7,16 @@ import matplotlib.image as mpimg
 import numpy as np
 import tensorflow.keras as kr
 import random
+import smtplib
+import ssl
+import time
 
 from dotenv import find_dotenv, load_dotenv
 from tensorflow.keras.utils import load_img, img_to_array
 from numpy.core.defchararray import array
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
-from tensorflow.keras.models import load_model
+from tensorflow.keras.models import load_model, model_from_json
 
 def format_path(path) -> str:
     return path.replace("/", os.sep).replace("\\", os.sep)
@@ -87,6 +90,17 @@ def create_model(img_height, img_width, img_deep, num_categories):
     
     return model
 
+def save_model(model, name):
+    # Serializamos el modelo en JSON
+    model_json = model.to_json()
+    with open(f"{name}.json", "w") as json_file:
+        json_file.write(model_json)
+        
+    # Serializamos el modelo en H5
+    model.save_weights(f"{name}.h5")
+    
+    print(f"Modelo {name} guardado en el disco")
+
 if __name__ == '__main__':
     
     # Cargamos las variables de entorno
@@ -151,15 +165,19 @@ if __name__ == '__main__':
     
     # Establecemos los checkpoints
     early_stopping = EarlyStopping(monitor='val_loss', patience=PATIENT, restore_best_weights=True)
-    checkpoint = ModelCheckpoint(MODEL_NAME, monitor='val_accuracy', verbose=1, save_best_only=True, mode='max')
+    checkpoint = ModelCheckpoint(f"{MODEL_NAME}.h5", monitor='val_accuracy', verbose=1, save_best_only=True, mode='max')
+    
+    # Obtenemos el tiempo de entreno del modelo
+    start_time = time.time()
     
     # Entrenamos el modelo
     result = model.fit(train_data, epochs=EPOCHS, callbacks=[early_stopping, checkpoint], validation_data=validation_data)
     
-    model.save(MODEL_NAME)
+    end_time = time.time() - start_time
     
-    # Obtenemos las estadisticas del modelo
-    scores = model.evaluate(train_data, validation_data, verbose=0)
-    accuracy = scores[1]*100
+    # Mostramos el tiempo total de entreno
+    print(f"Tiempo total de entrenamiento: {end_time}")
     
-    print("%s: %.2f%%" % (model.metrics_names[1], scores[1]*100))
+    # Guardamos el modelo
+    save_model(model, MODEL_NAME)
+    

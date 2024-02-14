@@ -9,3 +9,5 @@ path
 scipy
 tensorflow-directml-plugin
 h5py
+smtplib
+ssl
