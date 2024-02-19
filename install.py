@@ -7,9 +7,6 @@ os.system("python -m pip install --upgrade pip")
 # Instalamos los requerimientos
 os.system("pip install -r requirements.txt")
 
-# Convertimos los notebooks
-os.system("python convert_notebooks.py")
-
 # Guardamos la ruta absoluta el proyecto
 path = os.path.abspath("./")
 os.putenv("PROJECT_PATH", path)
@@ -26,3 +23,6 @@ if "PROJECT_PATH" not in env_variables:
         for key in env_variables:
             f.write(f'{key}={env_variables[key]}')
         f.write(f'PROJECT_PATH={path}\n')
+        
+# Descargamos los datasets
+os.system("python download_datasets.py")

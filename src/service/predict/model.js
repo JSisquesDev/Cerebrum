@@ -1,8 +1,6 @@
 const dao = require('./dao');
 const logger = require('../../util/logger');
 
-//const { CurriculumVitae } = require('../../entities/CurriculumVitae');
-
 module.exports = {
   async predictDetection() {
     logger.info('model.js - Entering predictDetection()');
@@ -23,7 +21,7 @@ module.exports = {
   async predictClassification() {
     logger.info('model.js - Entering predictClassification()');
 
-    // Cargamos el modelo de classificación
+    // Cargamos el modelo de clasificación
     const model = '';
 
     if (!model) {
