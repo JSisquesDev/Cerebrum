@@ -1,23 +1,54 @@
 const dao = require('./dao');
 const logger = require('../../util/logger');
-const tf = require('@tensorflow');
 
 //const { CurriculumVitae } = require('../../entities/CurriculumVitae');
 
 module.exports = {
-  async classifyBird(language) {
-    logger.info('model.js - Entering classifyBird()');
+  async predictDetection() {
+    logger.info('model.js - Entering predictDetection()');
 
+    // Cargamos el modelo de detección
     const model = '';
 
     if (!model) {
-      logger.error('model.js - Model not founded');
+      logger.error('model.js - Detection model not founded');
       return null;
     }
 
-    const response = '';
+    const response = 'OK';
 
-    //const cu = new CurriculumVitae(personalData);
+    return response;
+  },
+
+  async predictClassification() {
+    logger.info('model.js - Entering predictClassification()');
+
+    // Cargamos el modelo de classificación
+    const model = '';
+
+    if (!model) {
+      logger.error('model.js - Classification model not founded');
+      return null;
+    }
+
+    const response = 'OK';
+
+    return response;
+  },
+
+  async predictSegmentation() {
+    logger.info('model.js - Entering predictSegmentation()');
+
+    // Cargamos el modelo de segmentación
+    const model = '';
+
+    if (!model) {
+      logger.error('model.js - Segmentation model not founded');
+      return null;
+    }
+
+    const response = 'OK';
+
     return response;
   },
 };

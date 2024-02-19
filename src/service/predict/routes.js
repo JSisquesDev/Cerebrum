@@ -3,6 +3,6 @@ const controller = require('./controller');
 
 const router = express.Router();
 
-router.get('/birds', controller.classifyBird);
+router.get('/predict', controller.predict);
 
 module.exports = router;
