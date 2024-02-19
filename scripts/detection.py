@@ -34,11 +34,11 @@ def create_model(img_height, img_width, img_deep, num_categories):
     # Configuramos el modelo
     optimizer = tf.optimizers.Adam(1e4)
     metrics = tf.metrics.Accuracy()
-    loss = 'categorical_crossentropy'
+    loss = 'binary_crossentropy'
     
     model  = kr.Sequential([
     # Bloque 01
-    kr.layers.Conv2D(64, activation='relu', kernel_size=(3, 3), input_shape=(img_height, img_width, img_deep)),
+    kr.layers.Conv2D(96, activation='relu', kernel_size=(3, 3), input_shape=(img_height, img_width, img_deep)),
     kr.layers.Conv2D(64, activation='relu', kernel_size=(3, 3), padding='same'),
     kr.layers.MaxPooling2D(2,2),
 
@@ -70,14 +70,13 @@ def create_model(img_height, img_width, img_deep, num_categories):
 
     # Bloque 06
     kr.layers.Flatten(),
-    kr.layers.Dropout(0.5),
 
     # Bloque 07
     kr.layers.Dense(4096, activation='relu'),
     kr.layers.Dropout(0.5),
     kr.layers.Dense(4096, activation='relu'),
     kr.layers.Dropout(0.5),
-    kr.layers.Dense(num_categories, activation='softmax')
+    kr.layers.Dense(num_categories - 1, activation='sigmoid')
     ])
     
     model.compile(
@@ -110,14 +109,14 @@ if __name__ == '__main__':
     print(f"Dispositivo de entrenamiento: {tf.config.list_physical_devices('GPU')}")
     
     # Establecemos el tamaño de las imágenes
-    IMG_WIDTH = int(os.getenv("CLASSIFICATION_IMG_WIDTH"))
-    IMG_HEIGHT = int(os.getenv("CLASSIFICATION_IMG_HEIGHT"))
-    IMG_DEEP = int(os.getenv("CLASSIFICATION_IMG_DEEP"))
-    BATCH_SIZE = int(os.getenv("CLASSIFICATION_BATCH_SIZE"))
+    IMG_WIDTH = int(os.getenv("DETECTION_IMG_WIDTH"))
+    IMG_HEIGHT = int(os.getenv("DETECTION_IMG_HEIGHT"))
+    IMG_DEEP = int(os.getenv("DETECTION_IMG_DEEP"))
+    BATCH_SIZE = int(os.getenv("DETECTION_BATCH_SIZE"))
     
     # Establecemos las constantes de las rutas
     PROJECT_PATH = os.getenv("PROJECT_PATH")
-    DATASET_PATH = os.path.join(PROJECT_PATH, os.getenv("DATASET_CLASSIFICATION_PATH"))
+    DATASET_PATH = os.path.join(PROJECT_PATH, os.getenv("DATASET_DETECTION_PATH"))
     
     print(f"Ruta de entreno: {DATASET_PATH}")
     
@@ -131,7 +130,7 @@ if __name__ == '__main__':
         batch_size = BATCH_SIZE,
         color_mode = "grayscale",
         shuffle = True,
-        class_mode = 'categorical',
+        class_mode = 'binary',
         subset = 'training',
     )
     
@@ -142,7 +141,7 @@ if __name__ == '__main__':
         batch_size = BATCH_SIZE,
         color_mode = "grayscale",
         shuffle = False,
-        class_mode = 'categorical',
+        class_mode = 'binary',
         subset = 'validation'
     )
     
@@ -156,12 +155,12 @@ if __name__ == '__main__':
     model = create_model(IMG_HEIGHT, IMG_WIDTH, IMG_DEEP, NUM_CATEGORIES)
 
     # Establecemos los epcohs y el patient
-    EPOCHS = int(os.getenv("CLASSIFICATION_EPOCHS"))
-    PATIENT = int(os.getenv("CLASSIFICATION_PATIENT"))
+    EPOCHS = int(os.getenv("DETECTION_EPOCHS"))
+    PATIENT = int(os.getenv("DETECTION_PATIENT"))
     
     # Creamos las constantes para guardar el modelo
-    MODEL_PATH = os.path.join(PROJECT_PATH, os.getenv("CLASSIFICATION_MODEL_PATH"))
-    MODEL_NAME = os.path.join(MODEL_PATH, os.getenv("CLASSIFICATION_MODEL_NAME"))
+    MODEL_PATH = os.path.join(PROJECT_PATH, os.getenv("DETECTION_MODEL_PATH"))
+    MODEL_NAME = os.path.join(MODEL_PATH, os.getenv("DETECTION_MODEL_NAME"))
     
     # Establecemos los checkpoints
     early_stopping = EarlyStopping(monitor='val_loss', patience=PATIENT, restore_best_weights=True)

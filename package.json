@@ -1,0 +1,27 @@
+{
+  "name": "cerebrum",
+  "version": "1.0.0",
+  "description": "Este proyecto tiene como objetivo desarrollar modelos de inteligencia artificial (IA) avanzados para la detección precisa, clasificación y segmentación de tumores cerebrales a partir de imágenes médicas, como resonancias magnéticas (MRI) y tomografías computarizadas (CT).",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "IA, Machine Learning"
+  ],
+  "author": "JSisques",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "moment": "^2.30.1",
+    "sequelize": "^6.35.2",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.0",
+    "winston": "^3.11.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  }
+}
