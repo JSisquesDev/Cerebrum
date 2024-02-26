@@ -2,10 +2,10 @@ import os
 import shutil
 
 # Actualizamos pip
-os.system("python -m pip install --upgrade pip")
+os.system("python3 -m pip install --upgrade pip")
 
 # Instalamos los requerimientos
-os.system("pip install -r requirements.txt")
+os.system("pip3 install -r requirements.txt")
 
 # Guardamos la ruta absoluta el proyecto
 path = os.path.abspath("./")
@@ -25,4 +25,4 @@ if "PROJECT_PATH" not in env_variables:
         f.write(f'PROJECT_PATH={path}\n')
         
 # Descargamos los datasets
-os.system("python download_datasets.py")
+os.system("python3 download_datasets.py")
