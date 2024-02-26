@@ -9,8 +9,8 @@ import numpy as np
 from dotenv import find_dotenv, load_dotenv
 
 from classes.dataset import Dataset
-from classes.alexnet import AlexNet
-from classes.vgg19 import VGG19
+from classes.models.classification.alexnet import AlexNet
+from classes.models.classification.vgg19 import VGG19
 
 def format_path(path) -> str:
     return path.replace("/", os.sep).replace("\\", os.sep)
