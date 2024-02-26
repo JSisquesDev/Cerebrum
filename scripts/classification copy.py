@@ -5,33 +5,15 @@ from matplotlib import pyplot
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 import numpy as np
-import tensorflow.keras as kr
-import random
-import smtplib
-import ssl
-import time
 
 from dotenv import find_dotenv, load_dotenv
-from tensorflow.keras.utils import load_img, img_to_array
-from numpy.core.defchararray import array
-from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
-from tensorflow.keras.preprocessing.image import ImageDataGenerator
-from tensorflow.keras.models import load_model, model_from_json
 
-from classes import vgg19
-from classes import alexnet
+from classes.dataset import Dataset
+from classes.alexnet import AlexNet
+from classes.vgg19 import VGG19
 
 def format_path(path) -> str:
     return path.replace("/", os.sep).replace("\\", os.sep)
-
-def set_image_data_generator() -> ImageDataGenerator:
-    return ImageDataGenerator(
-        rescale=1.0/255,
-        horizontal_flip=True,
-        vertical_flip=True,
-        validation_split=0.2,
-        rotation_range=20 
-    )
 
 if __name__ == '__main__':
     
@@ -53,75 +35,51 @@ if __name__ == '__main__':
     
     print(f"Ruta de entreno: {DATASET_PATH}")
     
-    # Creamos el generador de datos
-    data_generator = set_image_data_generator()
-    
-    # Creamos el dataset de entrenamiento
-    train_data = data_generator.flow_from_directory(
-        DATASET_PATH,
-        target_size = (IMG_HEIGHT, IMG_WIDTH),
-        batch_size = BATCH_SIZE,
-        color_mode = "grayscale",
-        shuffle = True,
-        class_mode = 'categorical',
-        subset = 'training',
-    )
-    
-    # Creamos el dataset de validación
-    validation_data = data_generator.flow_from_directory(
-        DATASET_PATH,
-        target_size = (IMG_HEIGHT, IMG_WIDTH),
-        batch_size = BATCH_SIZE,
-        color_mode = "grayscale",
-        shuffle = False,
-        class_mode = 'categorical',
-        subset = 'validation'
-    )
+    dataset = Dataset(DATASET_PATH)
+    dataset.configure(IMG_HEIGHT, IMG_WIDTH, BATCH_SIZE, "grayscale", 'categorical')
+    dataset.apply_data_augmentation()
+    dataset.set_data()
     
     # Mostramos las categorias
-    LABELS = train_data.class_indices
-    NUM_CATEGORIES = LABELS.__len__()
-    print(f"Las categorias son: {LABELS}")
-    print(f"Numero de categorias: {NUM_CATEGORIES}")
+    print(f"Las categorias son: {dataset.labels}")
+    print(f"Numero de categorias: {dataset.num_categories}")
     
     # Creamos las constantes para guardar el modelo
     MODEL_PATH = os.path.join(PROJECT_PATH, os.getenv("CLASSIFICATION_MODEL_PATH"))
-    MODEL_NAME = os.path.join(MODEL_PATH, "AlexNet")
+    MODEL_NAME = os.path.join(MODEL_PATH, "AlexNet", "AlexNet")
     
     # Establecemos los epcohs y el patient
     EPOCHS = int(os.getenv("CLASSIFICATION_EPOCHS"))
     PATIENT = int(os.getenv("CLASSIFICATION_PATIENT"))
     
-    alexnet = alexnet.AlexNet(MODEL_NAME)
+    alexnet = AlexNet(MODEL_NAME)
     
-    alexnet.create_model(IMG_HEIGHT, IMG_WIDTH, IMG_DEEP, NUM_CATEGORIES)
+    alexnet.create_model(IMG_HEIGHT, IMG_WIDTH, IMG_DEEP, dataset.num_categories)
     alexnet.compile(tf.optimizers.Adam(1e4), tf.metrics.Accuracy(), 'categorical_crossentropy')
     alexnet.set_early_stopping(PATIENT)
     alexnet.set_checkpoint()
     
-    alexnet.train(train_data, EPOCHS, validation_data)
+    alexnet.train(dataset.train_data, EPOCHS, dataset.validation_data)
     
     # Evaluamos el modelo
-    train_loss, train_success = alexnet.evaluate(train_data)
-    validation_loss, validation_success = alexnet.evaluate(validation_data)
+    train_loss, train_success = alexnet.evaluate(dataset.train_data)
+    validation_loss, validation_success = alexnet.evaluate(dataset.validation_data)
     
     alexnet.save(MODEL_NAME)
     
-    MODEL_NAME = os.path.join(MODEL_PATH, "VGG19")
+    MODEL_NAME = os.path.join(MODEL_PATH, "VGG19", "VGG19")
     
-    vgg19 = vgg19.VGG19(MODEL_NAME)
+    vgg19 = VGG19.VGG19(MODEL_NAME)
     
-    vgg19.create_model(IMG_HEIGHT, IMG_WIDTH, IMG_DEEP, NUM_CATEGORIES)
+    vgg19.create_model(IMG_HEIGHT, IMG_WIDTH, IMG_DEEP, dataset.num_categories)
     vgg19.compile(tf.optimizers.Adam(1e4), tf.metrics.Accuracy(), 'categorical_crossentropy')
     vgg19.set_early_stopping(PATIENT)
     vgg19.set_checkpoint()
     
-    vgg19.train(train_data, EPOCHS, validation_data)
+    vgg19.train(dataset.train_data, EPOCHS, dataset.validation_data)
     
     # Evaluamos el modelo
-    train_loss, train_success = vgg19.evaluate(train_data)
-    validation_loss, validation_success = vgg19.evaluate(validation_data)
+    train_loss, train_success = vgg19.evaluate(dataset.train_data)
+    validation_loss, validation_success = vgg19.evaluate(dataset.validation_data)
     
     vgg19.save(MODEL_NAME)
-    
-
