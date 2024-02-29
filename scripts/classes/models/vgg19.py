@@ -1,4 +1,4 @@
-from . import model
+from .. import model
 
 import tensorflow.keras as kr
 
@@ -6,7 +6,7 @@ class VGG19(model.Model):
     def __init__(self, name) -> None:
         self.name = name
     
-    def create_model(self, img_height, img_width, img_deep, num_categories):
+    def create_model(self, img_height, img_width, img_deep, num_categories, activation='softmax'):
         self.model  = kr.Sequential([
             # Bloque 01
             kr.layers.Conv2D(64, activation='relu', kernel_size=(3, 3), input_shape=(img_height, img_width, img_deep)),
@@ -48,5 +48,5 @@ class VGG19(model.Model):
             kr.layers.Dropout(0.5),
             kr.layers.Dense(4096, activation='relu'),
             kr.layers.Dropout(0.5),
-            kr.layers.Dense(num_categories, activation='softmax')
+            kr.layers.Dense(num_categories, activation=activation)
         ])
